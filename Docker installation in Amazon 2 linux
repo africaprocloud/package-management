@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo hostnamectl set-hostname docker
-sudo apt update -y
-sudo apt install docker.io -y
+sudo yum update -y
+sudo yum install docker.io -y
 sudo service docker start
 sudo docker info 
 sudo usermod -aG docker ec2-user
