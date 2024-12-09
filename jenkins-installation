@@ -11,7 +11,7 @@ Install other softwares - git, unzip and wget
 
 sudo hostnamectl set-hostname jenkins
 sudo yum -y install unzip wget tree git
-sudo yum install java-11-openjdk-devel java-1.8.0-openjdk-devel -y
+sudo yum install java-17-openjdk-devel java-1.8.0-openjdk-devel -y
 
 Add Jenkins Repository and key
 
