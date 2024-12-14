@@ -13,10 +13,10 @@ sudo hostnamectl set-hostname tomcat9
 cd /opt
 sudo yum install git unzip wget -y
 sudo yum install java-1.8.0-openjdk-devel java-11-openjdk-devel
-sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.97/bin/apache-tomcat-9.0.97.tar.gz
-sudo tar -xvf apache-tomcat-9.0.97.tar.gz
-sudo rm -rf apache-tomcat-9.0.97.tar.gz
-sudo mv apache-tomcat-9.0.97 tomcat9
+sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.98/bin/apache-tomcat-9.0.98.tar.gz
+sudo tar -xvf apache-tomcat-9.0.98.tar.gz
+sudo rm -rf apache-tomcat-9.0.98.tar.gz
+sudo mv apache-tomcat-9.0.98 tomcat9
 sudo chmod 777 -R /opt/tomcat9
 sudo chown ec2-user -R /opt/tomcat9
 sh /opt/tomcat9/bin/startup.sh   # Startup tomcat
