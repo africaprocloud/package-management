@@ -46,3 +46,30 @@ Unable to access nexus URL?
 a)make sure port 8081 is opened in security groups in AWS ec2 instance.
 
 Troubleshooting
+
+
+
+#!/bin/bash
+# Author: Prof Atanga
+# Script requires root access
+# This script installs nexus
+
+sudo hostnamectl set-hostname nexus
+sudo useradd nexus
+sudo echo "nexus ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/nexus
+cd /opt
+sudo yum install wget git nano unzip -y
+sudo yum install java-17 -y
+sudo wget http://download.sonatype.com/nexus/3/nexus-3.77.1-01-unix.tar.gz 
+sudo tar -zxvf nexus-3.77.1-01-unix.tar.gz
+sudo mv /opt/nexus-3.77.1-01 /opt/nexus
+sudo rm -rf nexus-3.77.1-01-unix.tar.gz
+sudo chown -R nexus:nexus /opt/nexus
+sudo chown -R nexus:nexus /opt/sonatype-work
+sudo chmod -R 775 /opt/nexus
+sudo chmod -R 775 /opt/sonatype-work
+sudo echo  'run_as_user="nexus" ' > /opt/nexus/bin/nexus.rc
+sudo ln -s /opt/nexus/bin/nexus /etc/init.d/nexus
+sudo su - nexus -c "/opt/nexus/bin/nexus enable"
+sudo su - nexus -c "/opt/nexus/bin/nexus start"
+sudo su - nexus -c "/opt/nexus/bin/nexus status"
