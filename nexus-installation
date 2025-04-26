@@ -49,6 +49,10 @@ Troubleshooting
 
 
 
+
+#Use as user data
+=================
+
 #!/bin/bash
 # Author: Prof Atanga
 # Script requires root access
