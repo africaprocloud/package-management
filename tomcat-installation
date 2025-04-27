@@ -85,3 +85,29 @@ crontab < /opt/tomcat9/crontom
 
 
 
+#use the script below as user data
+#if tomcat can't be access, check the version.
+
+#!/bin/bash
+# Author: Prof Atanga
+# Script requires root access
+# This script installs Tomcat
+
+sudo hostnamectl set-hostname tomcat9
+cd /opt
+sudo yum install git unzip wget -y
+sudo yum install java-11 -y
+sudo wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.102/bin/apache-tomcat-9.0.102.tar.gz
+sudo tar -xvf apache-tomcat-9.0.102.tar.gz
+sudo rm -rf apache-tomcat-9.0.102.tar.gz
+sudo mv apache-tomcat-9.0.102 tomcat9
+sudo chmod 777 -R /opt/tomcat9
+sudo chown ec2-user -R /opt/tomcat9
+sh /opt/tomcat9/bin/startup.sh   # Startup tomcat
+sudo ln -s /opt/tomcat9/bin/startup.sh /usr/bin/starttomcat # soft link to start tomcat from anyhwere
+sudo ln -s /opt/tomcat9/bin/shutdown.sh /usr/bin/stoptomcat
+starttomcat
+sudo sed -i '/^  <Valve*/i <!--' /opt/tomcat9/webapps/manager/META-INF/context.xml
+sudo sed -i '/^         allow*/a -->' /opt/tomcat9/webapps/manager/META-INF/context.xml
+sudo sed -i '/^<\/tomcat-users>/i <user username="admin" password="admin" roles="manager-gui,manager-script"\/>' /opt/tomcat9/conf/tomcat-users.xml
+/bin/bash
