@@ -1,0 +1,243 @@
+INSTALLATION OF PROMETHEUS USING WGET
+=====================================
+Create an ec2 T2.medium instance
+
+Go to your browser and search for prometheus.
+
+Type prometheus.io/download
+
+Copy one of the tar files
+e.g 
+   https://github.com/prometheus/prometheus/releases/download/v3.2.1/prometheus-3.2.1.linux-amd64.tar.gz
+
+Use wget to download it.
+unzip the downloaded tar file.
+delete the tar file after unzip
+ 
+ cd prometheus-3.2.1.linux-amd64
+
+mkdir ~/prometheus-3.2.1.linux-amd64/data
+ 
+ ls
+
+ execute the prometheus executable file to start prometheus.
+
+       ./prometheus & -> & will run the file
+                         in the background 
+
+Access prometheus on your browser
+
+      public-ip:9090
+
+GRAFANA INSTALLATION
+
+Go to your browser and access
+
+   grafana.com/grafana/download
+
+Run the 3 command you will find for the installation of grafana on ubuntu 
+
+   sudo apt-get install -y adduser libfontconfig1 musl 
+
+   wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.5.2_amd64.deb
+
+   sudo dpkg -i grafana-enterprise_11.5.2_amd64.deb 
+
+After running the 3 commands, run the below command to start grafana.
+
+      sudo /bin/systemctl start grafana-server 
+
+Access garfana
+
+    public-ip:3000
+
+Exporters configuration
+-----------------------
+
+Access prometheus.io
+
+In the search box, serach for blackbox_exporter 
+
+copy the link to the linux package
+
+user wget to download
+
+  wget https://github.com/prometheus/blackbox_exporter/releases/download/v0.26.0/blackbox_exporter-0.26.0.linux-amd64.tar.gz
+
+Extract the package after downloading
+Delete the tar file
+Rename the extracted file to blackbox_exporter
+
+   cd blackbox_exporter
+   ls
+Execute the blackbox_exporter executable file to start blackbox
+
+    ./blackbox_exporter &
+
+Access blackbox_exporter
+
+     public-ip:9115  
+
+
+cd to prometheus
+vi prometheus.yml
+
+Define the application url that you want to monitor and the blackbox_exporter public-ip:9115.
+Edit the below file with your application url and blackbox_exporter public-ip:9115
+
+https://github.com/prometheus/blackbox_exporter
+
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - http://prometheus.io    # Target to probe with http.
+        - http://example.com:8080 # Target to probe with http on port 8080.
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  # The blackbox exporter's real hostname:port.
+  
+After doing that, run the below command to get the prometheus process id;
+
+       pgrep prometheus
+
+copy the prometheus PID and kill the process
+
+       kill PID
+
+ This is because we have to restart prometheus
+ 
+        ./prometheus &    -> to restart  
+
+
+Lonin to grafana, import a dashbord and monitor the application.
+
+Jenkins monitoring
+------------------
+
+Install node_exporter in jenkins.
+
+Access prometheus.io
+Search for node_exporter
+
+Copy the link and download it in jenkins using wget.
+
+     wget https://github.com/prometheus/node_exporter/releases/download/v1.9.0/node_exporter-1.9.0.linux-amd64.tar.gz
+
+After downloading it, unzip the file.
+Rename the extracted file to node_exporter.
+Delete the tar file
+
+cd node_exporter
+ls
+Run the executable file
+
+    ./node_exporter
+
+Access node_exporter
+
+     public-ip:9100    
+
+Connect to prometheus server
+cd prometheus
+ls
+vi prometheus.yml
+
+Define node_exporter and jenkins
+
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ['34.207.165.62:9100']
+
+  - job_name: "jenkins"
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['34.207.165.62:8080']
+
+After editing the file
+run;
+     pgrep prometheus --> process ID
+
+Copy the process ID and kill the process
+
+     kill PID
+
+Restart prometheus
+
+    ./prometheus &     
+
+Verify on prometheus GUI to make sure all the nodes are up and running
+
+Create a new Dashboard for node exporter to monitor jenkins
+
+
+
+EMAIL NOTIFICATION
+==================
+
+Use wget to download the alert manager tar file
+
+
+     wget alertmanager-0.21.0.linux-amd64.tar.gz
+
+Unzip the tar file 
+ 
+      sudo tar -xvzf alertmanager-0.21.0.linux-amd64.tar.gz                  
+
+Delete the tar file
+
+       sudo rm -rf alertmanager-0.21.0.linux-amd64.tar.gz
+
+Rename the unzip file
+
+       sudo mv alertmanager-0.21.0.linux-amd64 alertmanager
+
+       cd alertmanager
+       ls
+       sudo vi alertmanager.yml
+
+ While in the file, edit;
+ 
+     reciever: 'web-hook' # replace web-hook with
+                            email_notification
+
+    - name: 'web-hook'  # replace web-hook with email_notification
+
+
+Edit the file as below
+======================
+
+global:
+ resolve_timeout: 1m
+
+route:
+ receiver: 'email_notification'
+
+receivers:
+- name: 'email_notification'
+  email_configs:
+  - to: ndecalamba@gmail.com
+    from: ndecalamba@gmail.com
+    smarthost: smtp.gmail.com:587
+    auth_username: ndecalamba@gmail.com
+    auth_identity: ndecalamba@gmail.com
+    auth_password: passowrd (gmail APP passwd)
+    send_resolved: true
+
+
+For you to create an App passwd in gmail, login
+to gmail account and go to manage google account,
+ click on the security option, you will find, 
+ 2-step verification and App passwords.
+ create an App password.
+ copy it and use it and use as password.  
+
+Start alertmanager when you are done editing.
+
+      ./alertmanager.yml
