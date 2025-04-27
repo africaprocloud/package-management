@@ -1,0 +1,157 @@
+Prometheus
+    ==========
+
+Prometheus is a time series database.
+Prometheus is design to monitor targets, servers,
+databases, standalone virtual machines.
+Everything can be monitored with prometheus.
+
+    Grafana
+    =======
+Grafana is a multi-platform open source analytic and
+interactive visualization tool.
+It provides charts, graphs, and alert when connected to
+supported data sources. 
+It is expandable through a plug-in system.
+End users can create complex monitoring dashboards using
+interactive query builders 
+
+
+Integration of Prometheus with jenkins
+--------------------------------------
+
+Login to jenkins dashboard.
+Go to manage jenkins.
+Select plugins.
+Select available plugin.
+  enter prometheus in the search bar.
+  install prometheus metrics plugin.
+  restart jenkins for it to be full initilize
+
+When you install the plugin, this plugin will expose 
+the endpoint where the prometheus server can scrab the
+data.
+After installing the plugin, it will create one endpoint,
+and by default, <jenkins-url>/prometheus.
+e.g 897.145.24:8080/prometheus.
+
+so if you enter your jenkins-url/prometheus you will find
+an endpoint that has been extablish by the plugin
+
+You can now change the configuration of this plugin by
+going to jenkins.
+manage jenkins.
+configure system
+search for prometheus and you can change the default
+values to your desire values. 
+
+
+Prometheus and Grafana installation using docker
+------------------------------------------------
+
+For prometheus;
+run the command;
+
+      docker run --name prometheus -d -p 9090:9090 prom/prometheus
+
+For grafana;
+run the command;
+
+      docker run --name grafana -d -p 3000:3000 grafana/grafana
+
+After installing and checking that prometheus and grafana are installed.
+
+For you to access jenkins server in prometheus, you need some configurations.
+
+Go in the Prometheus container.
+   run the command;
+
+         docker exec -it prometheus/prometheuscontainerID /bin/sh
+
+Once in the prometheus container,
+navigate to the configuration directoty 
+
+    /etc/prometheus
+
+by running the command;
+
+      cd /etc/prometheus
+
+list the directory
+
+      ls
+
+In it, you will find a prometheus.yml file
+
+vi into the prometheus.yml file 
+
+        vi prometheus.yml
+
+
+edit the file with;
+
+
+  - job_name: "jenkins"
+    metrics_path: /prometheus
+    static_configs:
+      - targets: ['34.207.165.62:8080']
+
+
+Verify the file to see if it was properly edited;
+
+       cat prometheus.yml  
+
+You can equally check if all the synthax in the file 
+is correct by using yml lint
+
+enter <yml lint> on your browser and select the;
+
+        YAMLlint - The YAML Validator
+
+copy your code and paste in it to check 
+If it is not correct, you can correct it by using
+
+       yml corrector on your browser
+
+If you confirmed that you edited the file well,
+you can then exit from the container.
+run;
+        exit                            
+
+Restart the prometheus container to re-enforce changes.
+
+       docker restart prometheus/prometheusID
+
+Check if prometheus is up and running.
+
+       docker ps
+       docker conatiner ls
+
+Copy the prometheus server public IP address and access
+prometheus on the browser  
+
+Connecting prometheus to grafana
+--------------------------------
+
+Login to grafana gui on your browser using the server public Ip address.
+Select data source and select prometheus.
+It will take you to a page, and you will find where to enter the prometheus 
+server url. Edit it with your prometheus server url.
+
+Scroll down and click on save and test botton.
+
+Go back by clicking on backward key and you see that the data source has been added.
+
+navigate to the side where the + sign is located, click on it to create a dashboard.
+
+you can create your own dashboard or import an exiting one.
+
+To import a dashboard, click on import dashborad.
+Enter the grafana Dashboard ID that you want to import.
+e.g 9964
+
+Or pick one from grafana dashborad id   
+
+monitor your applications
+
+End of runbook
