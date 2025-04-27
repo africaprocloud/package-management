@@ -1,5 +1,5 @@
-Prometheus
-    ==========
+   Prometheus
+   ==========
 
 Prometheus is a time series database.
 Prometheus is design to monitor targets, servers,
