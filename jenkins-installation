@@ -41,7 +41,6 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 # RUN SCRIPT AS ROOT USER/ADMIN/SUDOER
 
 #!/bin/bash
-sudo timedatectl set-timezone America/New_York
 sudo hostnamectl set-hostname jenkins
 sudo yum install wget git unzip vim -y
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
