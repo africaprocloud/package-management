@@ -6,29 +6,33 @@
 #As a good security practice, SonarQuber Server is not advised to run sonar service as a root user, 
 # create a new user called sonar and grant sudo access to manage sonar services as follows
 
+#!/bin/bash
+# Author: Prof Atanga
+# Script requires root access
+# This script installs sonarqube
+
+sudo hostnamectl set-hostname sonar
 sudo useradd sonar
 sudo echo "sonar ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/sonar
-sudo hostnamectl set-hostname sonar 
-sudo su - sonar
-
-
-sudo passwd sonar
+sudo echo "sonar:admin123" | chpasswd
 sudo sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
 # Or use the below command also
 # sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sudo service sshd restart
 cd /opt
-sudo yum -y install unzip wget git -y
-sudo yum install  java-11-openjdk-devel -y
-sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.8.zip
-sudo unzip sonarqube-7.8.zip
-sudo rm -rf sonarqube-7.8.zip
-sudo mv sonarqube-7.8 sonarqube
+sudo yum install unzip wget git -y
+sudo yum install  java-17 -y
+sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-24.12.0.100206.zip
+sudo unzip sonarqube-24.12.0.100206.zip
+sudo rm -rf sonarqube-24.12.0.100206.zip
+sudo mv sonarqube-24.12.0.100206 sonarqube
 sudo chown -R sonar:sonar /opt/sonarqube/
 sudo chmod -R 775 /opt/sonarqube/
-sh /opt/sonarqube/bin/linux-x86-64/sonar.sh start 
-sh /opt/sonarqube/bin/linux-x86-64/sonar.sh status
+sudo su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh start" 
+sudo su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh status"
 curl -v localhost:9000
+/bin/bash
+
 
 Always use this link to download the latest version of sonarqube
 
@@ -65,6 +69,7 @@ sudo su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh start"
 sudo su - sonar -c "/opt/sonarqube/bin/linux-x86-64/sonar.sh status"
 curl -v localhost:9000
 /bin/bash
+
 
 
 
